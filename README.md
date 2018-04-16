@@ -1,5 +1,11 @@
 # IoT_SmartHousekeeper
 
+## Useful Links
+
+- [Azure IoT Hub + ML tutorial](https://docs.microsoft.com/en-gb/azure/iot-hub/iot-hub-weather-forecast-machine-learning)
+- [Azure ML Studio](https://studio.azureml.net/Home/)
+- [Azure portal](https://portal.azure.com/)
+
 ## 系统结构
 
 * 公共管家：收集所有用户的数据，学习所有用户的共性
