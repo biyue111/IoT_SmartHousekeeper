@@ -9,6 +9,7 @@ def format_data(data, d, v):
 
 
 request = web_request()
+data = config_noIoT.data_format
 data = format_data(data, "temperature", 20)
 data = format_data(data, "humidity", 20)
 request.send_request(data, config_noIoT.web_url, config_noIoT.api_key)
