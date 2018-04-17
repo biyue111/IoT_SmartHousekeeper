@@ -6,7 +6,7 @@ data =  {
                 "input2":
                 {
                     "ColumnNames": ["temperature", "humidity"],
-                    "Values": [ [ "%d", "%d" ], ]
+                    "Values": [ [ "value", "value" ], ]
                 },        },
             "GlobalParameters": {
 }
