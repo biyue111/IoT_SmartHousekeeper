@@ -43,7 +43,7 @@ data = format_data(data, "humidity", 20)
 
 #request.send_request(data, config_noIoT.web_url, config_noIoT.api_key)
 try:
-   thread.start_new_thread( server.server_thread, (server_config.HOST, server_config.PORT, ) )
+   thread.start_new_thread( server_thread, (server_config.HOST, server_config.PORT, ) )
    #thread.start_new_thread( client_thread, (sys.argv[1], PORT, ) )
 except:
    print "Error: unable to start thread"
