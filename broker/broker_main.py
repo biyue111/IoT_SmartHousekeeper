@@ -18,8 +18,9 @@ def TCP(sock, addr):
 		if not raw_data or raw_data.decode() == '-quit-': 
 			break
 		print raw_data
+		format_data(raw_data)
         #sock.send(data.decode('utf-8').upper().encode()) 
-
+	
 	sock.close() 
 	#print('Connection from %s:%s closed.' %addr) 
 
@@ -45,8 +46,6 @@ def format_data(raw_data):
 
 request = web_request()
 #server = broker_server()
-data = format_data(data, "temperature", 20)
-data = format_data(data, "humidity", 20)
 
 #request.send_request(data, config_noIoT.web_url, config_noIoT.api_key)
 try:
