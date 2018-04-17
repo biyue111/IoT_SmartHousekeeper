@@ -37,12 +37,12 @@ def server_thread(HOST, PORT):
 
 def format_data(raw_data):
 	global data
-	length = len(data.split(';'))-1
+	length = len(raw_data.split(';'))-1
 		
 	for i in range(0, length):
-		ind = data["Inputs"]["input2"]["ColumnNames"].index(data.split(';')[i].split(':')[0])
+		ind = data["Inputs"]["input2"]["ColumnNames"].index(raw_data.split(';')[i].split(':')[0])
 		#if ind
-		data["Inputs"]["input2"]["Values"][0][ind] = v = data.split(';')[i].split(':')[1]
+		data["Inputs"]["input2"]["Values"][0][ind] = v = raw_data.split(';')[i].split(':')[1]
 
 request = web_request()
 #server = broker_server()
