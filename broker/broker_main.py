@@ -1,7 +1,7 @@
 from web_requests import web_request
 from broker_server import *
 import config_noIoT as config_noIoT
-omport server_config as server_config
+import server_config as server_config
 
 # The broker server
 def TCP(sock, addr): 
