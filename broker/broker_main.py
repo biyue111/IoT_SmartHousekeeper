@@ -2,8 +2,8 @@ from web_requests import web_request
 import config_noIoT as config_noIoT
 
 def format_data(data, d, v):
-  ind = data["inputs"]["input2"]["ColumnNames"].index(d)
-  data["inputs"]["input2"]["Values"][ind] = v
+  ind = data["Inputs"]["input2"]["ColumnNames"].index(d)
+  data["Inputs"]["input2"]["Values"][ind] = v
   
   return data
 
