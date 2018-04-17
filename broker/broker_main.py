@@ -3,6 +3,7 @@ import config_noIoT as config_noIoT
 
 def format_data(data, d, v):
   ind = data["Inputs"]["input2"]["ColumnNames"].index(d)
+  print (ind)
   data["Inputs"]["input2"]["Values"][ind] = v
   
   return data
