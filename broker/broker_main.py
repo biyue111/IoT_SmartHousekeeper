@@ -36,7 +36,7 @@ def format_data(data, d, v):
 
 
 request = web_request()
-server = broker_server()
+#server = broker_server()
 data = config_noIoT.data_format
 data = format_data(data, "temperature", 20)
 data = format_data(data, "humidity", 20)
