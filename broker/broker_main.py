@@ -1,5 +1,6 @@
 from web_requests import web_request
-from broker_server import *
+import thread
+#from broker_server import *
 import config_noIoT as config_noIoT
 import server_config as server_config
 
@@ -29,7 +30,6 @@ def server_thread(HOST, PORT):
 
 def format_data(data, d, v):
   ind = data["Inputs"]["input2"]["ColumnNames"].index(d)
-  print (ind)
   data["Inputs"]["input2"]["Values"][0][ind] = v
   
   return data
