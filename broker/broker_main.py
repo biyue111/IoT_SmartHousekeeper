@@ -8,14 +8,16 @@ import sys
 import config_noIoT as config_noIoT
 import server_config as server_config
 
+data = config_noIoT.data_format
+
 # The broker server
 def TCP(sock, addr): 
 	while True:
-		data = sock.recv(1024) 
+		raw_data = sock.recv(1024) 
 		time.sleep(1) 
-		if not data or data.decode() == '-quit-': 
+		if not raw_data or raw_data.decode() == '-quit-': 
 			break
-		print data
+		print raw_data
         #sock.send(data.decode('utf-8').upper().encode()) 
 
 	sock.close() 
@@ -32,16 +34,17 @@ def server_thread(HOST, PORT):
 		sock, addr = s.accept()
 		TCP(sock, addr)
 
-def format_data(data, d, v):
-  ind = data["Inputs"]["input2"]["ColumnNames"].index(d)
-  data["Inputs"]["input2"]["Values"][0][ind] = v
-  
-  return data
-
+def format_data(raw_data):
+	global data
+	length = len(data.split(';'))-1
+		
+	for i in range(0, length):
+		ind = data["Inputs"]["input2"]["ColumnNames"].index(data.split(';')[i].split(':')[0])
+		#if ind
+		data["Inputs"]["input2"]["Values"][0][ind] = v = data.split(';')[i].split(':')[1]
 
 request = web_request()
 #server = broker_server()
-data = config_noIoT.data_format
 data = format_data(data, "temperature", 20)
 data = format_data(data, "humidity", 20)
 
