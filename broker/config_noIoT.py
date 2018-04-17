@@ -1,12 +1,12 @@
 
-data =  {
+data_format =  {
 
         "Inputs": {
 
                 "input2":
                 {
                     "ColumnNames": ["temperature", "humidity"],
-                    "Values": [ [ "value", "value" ], ]
+                    "Values": [ [ "%d", "%d" ], ]
                 },        },
             "GlobalParameters": {
 }
