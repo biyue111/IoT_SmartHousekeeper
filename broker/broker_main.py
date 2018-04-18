@@ -19,14 +19,14 @@ def format_data(raw_data):
 	length = len(raw_data.split(';'))-1
 		
 	for i in range(0, length):
-		try:
-			ind = sensor_value["ColumnNames"].index(raw_data.split(';')[i].split(':')[0])
-			#if ind
-			sensor_value["Values"][0][ind] = raw_data.split(';')[i].split(':')[1]
-		try:
-			ind = user_input["ColumnNames"].index(raw_data.split(';')[i].split(':')[0])
-			#if ind
-			user_input["Values"][0][ind] = raw_data.split(';')[i].split(':')[1]
+                k = raw_data.split(';')[i].split(':')[0]
+                v = raw_data.split(';')[i].split(':')[1]
+                if sensor_value["ColumnNames"].count(k):
+			ind = sensor_value["ColumnNames"].index(k)
+			sensor_value["Values"][0][ind] = v
+                if user_input["ColumnNames"].count(k):
+			ind = user_input["ColumnNames"].index(k)
+			user_input["Values"][0][ind] = v
 			
 def update_activators():
 	global sensor_value
@@ -34,18 +34,18 @@ def update_activators():
 
 	input_ind = sensor_value["ColumnNames"].index("sleepStatus")
 	output_ind = activators_state["ColumnNames"].index("ledStatus")
-	if sensor_value["Values"][0][input_ind] = "1" # if the user is sleeping
+        if sensor_value["Values"][0][input_ind] == "1": # if the user is sleeping
 		activators_state["Values"][0][output_ind] = "0" # trun off the LED
 		
 	input_ind = sensor_value["ColumnNames"].index("joyStatus")
 	output_ind = activators_state["ColumnNames"].index("curtainStatus")
-	if sensor_value["Values"][0][input_ind] = "1": # left
+	if sensor_value["Values"][0][input_ind] == "1": # left
 		next_state = float(activators_state["Values"][0][output_ind]) - 0.1 # drag the curtain to left
 		if next_state > 0:
 			activators_state["Values"][0][output_ind] = str(next_state)
 		else :
 			activators_state["Values"][0][output_ind] = "0"
-	else if sensor_value["Values"][0][input_ind] = "2": #right
+	elif sensor_value["Values"][0][input_ind] == "2": #right
 		next_state = float(activators_state["Values"][0][output_ind]) + 0.1 # trun off the LED
 		if next_state <=1 :
 			activators_state["Values"][0][output_ind] = str(next_state)
@@ -67,8 +67,8 @@ def format_response():
 def TCP(sock, addr): 
 	raw_data = sock.recv(1024) 
 	time.sleep(1) 
-	if not raw_data or raw_data.decode() == '-quit-': 
-		break
+	#if not raw_data or raw_data.decode() == '-quit-': 
+#		break
 	print raw_data
 	format_data(raw_data)
 	update_activators()
