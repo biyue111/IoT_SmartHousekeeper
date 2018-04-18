@@ -29,13 +29,22 @@ def format_data(raw_data):
 			user_input["Values"][0][ind] = raw_data.split(';')[i].split(':')[1]
 			
 def update_activators():
+	global sensor_value
+	global activators_state
+
 	input_ind = sensor_value["ColumnNames"].index("sleepStatus")
 	output_ind = activators_state["ColumnNames"].index("ledStatus")
 	if sensor_value["Values"][0][input_ind] = "1" # if the user is sleeping
 		activators_state["Values"][0][output_ind] = "0" # trun off the LED
 		
 def format_response():
+	global sensor_value
+	global activators_state
 	
+	response = ""
+	for i in range(len(activators_state["ColumnNames"])):
+		response = response + activators_state["ColumnNames"][i] + ":" + activators_state["Values"][0][i] + ";"
+	return response
 
 
 # The broker server
