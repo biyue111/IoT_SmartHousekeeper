@@ -11,7 +11,7 @@ data_format =  {
 }
     }
 
-sensor_value = { "ColumnNames": ["currentTime", "indoorTemp", "indoorHumid", "indoorIllum", "outdoorIllum" ],
+sensor_value = { "ColumnNames": ["currentTime", "indoorTemp", "humidity", "indoorIllum", "outdoorIllum" ],
                     "Values": [ [ "value", "value" , "value", "value", "value"], ] }
 user_input = { "ColumnNames": ["sleepStatus", "joyStatus" ],
                     "Values": [ [ "value", "value"], ] }

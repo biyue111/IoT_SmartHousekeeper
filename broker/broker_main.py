@@ -14,6 +14,14 @@ user_input = config_noIoT.user_input
 activators_state = config_noIoT.activators_state
 activators_lock_timer = config_noIoT.activators_lock_timer
 
+def lock_countdown():
+        global activators_lock_timer
+        for i in range(len(activators_lock_timer["Values"])):
+                if activators_lock_timer["Values"][i] > 0:
+                        activators_lock_timer["Values"][i] -= 1;
+        time.sleep(1000)
+
+
 def format_data(raw_data):
 	global data
 	length = len(raw_data.split(';'))-1
@@ -65,16 +73,18 @@ def format_response():
 
 # The broker server
 def TCP(sock, addr): 
-	raw_data = sock.recv(1024) 
-	time.sleep(1) 
-	#if not raw_data or raw_data.decode() == '-quit-': 
-#		break
-	print raw_data
-	format_data(raw_data)
-	update_activators()
-	response = format_response()
-        sock.send(response)
-	
+        while True:
+	        raw_data = sock.recv(1024) 
+	        time.sleep(1) 
+	        if not raw_data or raw_data.decode() == '-quit-': 
+	        	break
+	        print raw_data
+	        format_data(raw_data)
+	        update_activators()
+	        response = format_response()
+                print response
+                sock.sendall(response)
+	        
 	sock.close() 
 	#print('Connection from %s:%s closed.' %addr) 
 
@@ -86,8 +96,8 @@ def server_thread(HOST, PORT):
 	sock, addr = s.accept()
 	print('Accept new connection from %s.' %addr[0])
 	while True:
-		sock, addr = s.accept()
 		TCP(sock, addr)
+		sock, addr = s.accept()
 		
 # Send request to ML Studio	
 def send_request(self, data, url, api_key):
