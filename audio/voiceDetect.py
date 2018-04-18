@@ -33,7 +33,6 @@ def getHeader():
 def main():  
     while (1):
 		os.system("sudo arecord -D \"plughw:1,0\" -r 16000 -f \"Signed 16 bit Little Endian\" iotTest.wav")
-		9f5d4466e473e9cba18b585e194bef9e
 		f = open("iotTest.wav", 'rb')  
 		file_content = f.read()  
 		base64_audio = base64.b64encode(file_content)  
