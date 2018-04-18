@@ -1,4 +1,5 @@
-#from web_requests import web_request
+#!/usr/bin/python
+# -*- coding: utf-8 -*-  
 import socket
 import time
 import threading
@@ -8,7 +9,6 @@ import sys
 import config_noIoT as config_noIoT
 import server_config as server_config
 
-# -*- coding: utf-8 -*-  
 import requests  
 import urllib  
 import json  
@@ -147,20 +147,20 @@ def getHeader():
 	}  
 	return header 
 
-def audio_action(x):
-	global activators_state
-	if x == 0:
-	if x == 1:
-		
-	if x == 2: #turn on the light
-		
-	if x == 3: #turn off the light.
-		
-	if x == 4:
-	if x == 5:
-	if x == 6:
-	if x == 7:
-	if x == 8:
+#def audio_action(x):
+#	global activators_state
+#	if x == 0:
+#	if x == 1:
+#		
+#	if x == 2: #turn on the light
+#		
+#	if x == 3: #turn off the light.
+#		
+#	if x == 4:
+#	if x == 5:
+#	if x == 6:
+#	if x == 7:
+#	if x == 8:
 
 def audio_main():  
     while (1):
