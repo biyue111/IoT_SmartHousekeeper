@@ -8,6 +8,18 @@ import sys
 import config_noIoT as config_noIoT
 import server_config as server_config
 
+# -*- coding: utf-8 -*-  
+import requests  
+import urllib  
+import json  
+import hashlib  
+import base64
+import os
+from keyWordExtractUpdate import findWord  
+URL = "http://api.xfyun.cn/v1/service/v1/iat"  
+APPID = "xxx"  
+API_KEY = "xxx" 
+
 data = config_noIoT.data_format
 sensor_value = config_noIoT.sensor_value
 user_input = config_noIoT.user_input
@@ -35,7 +47,7 @@ def update_activators():
 	input_ind = user_input["ColumnNames"].index("sleepStatus")
 	output_ind = activators_state["ColumnNames"].index("ledStatus")
         if user_input["Values"][0][input_ind] == "1": # if the user is sleeping
-		activators_state["Values"][0][output_ind] = "0" # trun off the LED
+		activators_state["Values"][0][output_ind] = "1" # trun off the LED
 		
 	input_ind = user_input["ColumnNames"].index("joyStatus")
 	output_ind = activators_state["ColumnNames"].index("curtainStatus")
@@ -106,6 +118,68 @@ def send_request(self, data, url, api_key):
 	    # Print the headers - they include the requert ID and the timestamp, which are useful for debugging the failure
 	    print(error.info())
 	    print(json.loads(error.read()))
+		
+# Audio input
+def getHeader():  
+    curTime = str(int(time.time()))  
+    param = "{\"engine_type\": \"sms16k\", \"aue\": \"raw\"}"  
+    paramBase64 = base64.b64encode(param)  
+  
+    m2 = hashlib.md5()  
+    m2.update(API_KEY + curTime + paramBase64)  
+    checkSum = m2.hexdigest()  
+    header ={  
+        'X-CurTime':curTime,  
+        'X-Param':paramBase64,  
+        'X-Appid':APPID,  
+        'X-CheckSum':checkSum,  
+        'Content-Type':'application/x-www-form-urlencoded; charset=utf-8',  
+    }  
+    return header 
+
+def audio_action(x):
+	global 
+	if x == 0:
+	if x == 1:
+		
+	if x == 2: #turn on the light
+		
+	if x == 3: #turn off the light.
+		
+	if x == 4:
+	if x == 5:
+	if x == 6:
+	if x == 7:
+	if x == 8:
+
+def audio_main():  
+    while (1):
+		os.system("sudo arecord -D \"plughw:1,0\" -r 16000 -f \"Signed 16 bit Little Endian\" iotTest.wav")
+		f = open("iotTest.wav", 'rb')  
+		file_content = f.read()  
+		base64_audio = base64.b64encode(file_content)  
+		body = urllib.urlencode({'audio': base64_audio})  
+	  
+		r = requests.post(URL,headers=getHeader(),data=body)  
+		result = json.loads(r.content)  
+	  
+		if result["code"] == "0":  
+			print "success, data = " + result["data"]  
+			text = result["data"]
+		else:  
+			print r.text
+			return  
+		
+		#print type(text)
+		#text = u'咖啡'
+		#print text
+		#print type(text)
+		audio_action(findWord(text))
+		#print findWord(text)
+		
+		#print type(text.decode("utf-8"))
+		#print findWord(text.decode("utf-8"))
+    return  
 
 #request = web_request()
 #server = broker_server()
