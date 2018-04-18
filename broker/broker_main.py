@@ -32,20 +32,20 @@ def update_activators():
 	global sensor_value
 	global activators_state
 
-	input_ind = sensor_value["ColumnNames"].index("sleepStatus")
+	input_ind = user_input["ColumnNames"].index("sleepStatus")
 	output_ind = activators_state["ColumnNames"].index("ledStatus")
-        if sensor_value["Values"][0][input_ind] == "1": # if the user is sleeping
+        if user_input["Values"][0][input_ind] == "1": # if the user is sleeping
 		activators_state["Values"][0][output_ind] = "0" # trun off the LED
 		
-	input_ind = sensor_value["ColumnNames"].index("joyStatus")
+	input_ind = user_input["ColumnNames"].index("joyStatus")
 	output_ind = activators_state["ColumnNames"].index("curtainStatus")
-	if sensor_value["Values"][0][input_ind] == "1": # left
+	if user_input["Values"][0][input_ind] == "1": # left
 		next_state = float(activators_state["Values"][0][output_ind]) - 0.1 # drag the curtain to left
 		if next_state > 0:
 			activators_state["Values"][0][output_ind] = str(next_state)
 		else :
 			activators_state["Values"][0][output_ind] = "0"
-	elif sensor_value["Values"][0][input_ind] == "2": #right
+	elif user_input["Values"][0][input_ind] == "2": #right
 		next_state = float(activators_state["Values"][0][output_ind]) + 0.1 # trun off the LED
 		if next_state <=1 :
 			activators_state["Values"][0][output_ind] = str(next_state)
@@ -73,7 +73,7 @@ def TCP(sock, addr):
 	format_data(raw_data)
 	update_activators()
 	response = format_response()
-        sock.send(data.decode('utf-8').upper().encode())
+        sock.send(response)
 	
 	sock.close() 
 	#print('Connection from %s:%s closed.' %addr) 
