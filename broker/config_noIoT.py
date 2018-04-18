@@ -17,7 +17,7 @@ user_input = { "ColumnNames": ["sleepStatus", "joyStatus" ],
                     "Values": [ [ "value", "value"], ] }
 
 activators_state = { "ColumnNames": ["ledStatus", "coffeeStatus", "curtainStatus"],
-                    "Values": [ [ "0", "value" , "0"], ] }
+                    "Values": [ [ "1", "value" , "0"], ] }
 activators_lock_timer = { "ColumnNames": ["ledStatus", "coffeeStatus", "curtainStatus"],
                     "Values": [ [ 0, 0 , 0], ] }
 lock_time = 100
