@@ -148,7 +148,7 @@ def getHeader():
     return header 
 
 def audio_action(x):
-	global 
+	global activators_state
 	if x == 0:
 	if x == 1:
 		
