@@ -37,6 +37,21 @@ def update_activators():
 	if sensor_value["Values"][0][input_ind] = "1" # if the user is sleeping
 		activators_state["Values"][0][output_ind] = "0" # trun off the LED
 		
+	input_ind = sensor_value["ColumnNames"].index("joyStatus")
+	output_ind = activators_state["ColumnNames"].index("curtainStatus")
+	if sensor_value["Values"][0][input_ind] = "1": # left
+		next_state = float(activators_state["Values"][0][output_ind]) - 0.1 # drag the curtain to left
+		if next_state > 0:
+			activators_state["Values"][0][output_ind] = str(next_state)
+		else :
+			activators_state["Values"][0][output_ind] = "0"
+	else if sensor_value["Values"][0][input_ind] = "2": #right
+		next_state = float(activators_state["Values"][0][output_ind]) + 0.1 # trun off the LED
+		if next_state <=1 :
+			activators_state["Values"][0][output_ind] = str(next_state)
+		else :
+			activators_state["Values"][0][output_ind] = "1"
+		
 def format_response():
 	global sensor_value
 	global activators_state
@@ -44,6 +59,7 @@ def format_response():
 	response = ""
 	for i in range(len(activators_state["ColumnNames"])):
 		response = response + activators_state["ColumnNames"][i] + ":" + activators_state["Values"][0][i] + ";"
+	print ("response: " + response)
 	return response
 
 
