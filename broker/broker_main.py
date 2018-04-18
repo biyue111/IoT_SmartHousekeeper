@@ -121,21 +121,21 @@ def send_request(self, data, url, api_key):
 		
 # Audio input
 def getHeader():  
-    curTime = str(int(time.time()))  
-    param = "{\"engine_type\": \"sms16k\", \"aue\": \"raw\"}"  
-    paramBase64 = base64.b64encode(param)  
-  
-    m2 = hashlib.md5()  
-    m2.update(API_KEY + curTime + paramBase64)  
-    checkSum = m2.hexdigest()  
-    header ={  
-        'X-CurTime':curTime,  
-        'X-Param':paramBase64,  
-        'X-Appid':APPID,  
-        'X-CheckSum':checkSum,  
-        'Content-Type':'application/x-www-form-urlencoded; charset=utf-8',  
-    }  
-    return header 
+	curTime = str(int(time.time()))  
+	param = "{\"engine_type\": \"sms16k\", \"aue\": \"raw\"}"  
+	paramBase64 = base64.b64encode(param)  
+
+	m2 = hashlib.md5()  
+	m2.update(API_KEY + curTime + paramBase64)  
+	checkSum = m2.hexdigest()  
+	header ={  
+	'X-CurTime':curTime,  
+	'X-Param':paramBase64,  
+	'X-Appid':APPID,  
+	'X-CheckSum':checkSum,  
+	'Content-Type':'application/x-www-form-urlencoded; charset=utf-8',  
+	}  
+	return header 
 
 def audio_action(x):
 	global activators_state
