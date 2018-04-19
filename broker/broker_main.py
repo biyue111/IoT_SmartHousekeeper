@@ -33,7 +33,7 @@ def lock_countdown():
 		for i in range(len(activators_lock_timer["Values"][0])):
 			if activators_lock_timer["Values"][0][i] > 0:
 				activators_lock_timer["Values"][0][i] -= 1
-			print (activators_lock_timer["ColumnNames"][i] + ":" + str(activators_lock_timer["Values"][0][i]))
+			#print (activators_lock_timer["ColumnNames"][i] + ":" + str(activators_lock_timer["Values"][0][i]))
 		time.sleep(1)
 
 def lock_set(k, l_time):
