@@ -312,7 +312,7 @@ def web_request_thread():
 		web_response_action("coffeeStatus", res)
 		res = request.send_request(f_data, keys.CURTAIN_ML_URL, keys.CURTAIN_ML_API_KEY)
 		web_response_action("curtainStatus", res)
-		time.sleep(3)
+		time.sleep(20)
 
 
 try:
