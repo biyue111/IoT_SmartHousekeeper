@@ -34,9 +34,9 @@ def getHeader():
   
 def main():  
 	s = socket.socket(socker.AF_INET, socket.SOCK_DGRAM)
-	s.bind(server_config.AUDIO_CLIENT_HOST, server_config.AUDIO_CLIENT_PORT)
+	s.bind((server_config.AUDIO_CLIENT_HOST, server_config.AUDIO_CLIENT_PORT))
 	addr = (server_config.AUDIO_SERVER_HOST, server_config.AUDIO_SERVER_PORT)
-    while (1):
+    while True:
 		r_input = raw_input("Recording time")
 		if r_input == '':
 				print("Please write the recording time")
