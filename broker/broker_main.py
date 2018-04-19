@@ -16,7 +16,10 @@ import json
 import hashlib  
 import base64
 import os
-from keyWordExtractUpdate import findWord  
+from keyWordExtractUpdate import findWord
+from web_requests import web_requests
+
+import ast
 
 data = config_noIoT.data_format
 sensor_value = config_noIoT.sensor_value
@@ -25,16 +28,18 @@ activators_state = config_noIoT.activators_state
 activators_lock_timer = config_noIoT.activators_lock_timer
 
 def lock_countdown():
-        global activators_lock_timer
-        for i in range(len(activators_lock_timer["Values"][0])):
-                if activators_lock_timer["Values"][0][i] > 0:
-                        activators_lock_timer["Values"][0][i] -= 1;
-        time.sleep(1000)
+		while 1:
+			global activators_lock_timer
+			for i in range(len(activators_lock_timer["Values"][0])):
+					if activators_lock_timer["Values"][0][i] > 0:
+							activators_lock_timer["Values"][0][i] -= 1
+					print (activators_lock_timer["ColumnNames"][i] + ":" + str(activators_lock_timer["Values"][0][i]))
+			time.sleep(1)
 
-def lock_add(k, add_v):
-        global activators_lock_timer
-        ind = activators_lock_timer["ColumnNames"].index(k)
-        activators_lock_timer["Values"][0][ind] += add_v
+	def lock_set(k, l_time):
+			global activators_lock_timer
+			ind = activators_lock_timer["ColumnNames"].index(k)
+			activators_lock_timer["Values"][0][ind] = l_time
 
 
 
@@ -59,9 +64,9 @@ def update_activators_before_send():
 
 	input_ind = user_input["ColumnNames"].index("sleepStatus")
 	output_ind = activators_state["ColumnNames"].index("ledStatus")
-        if user_input["Values"][0][input_ind] == "1": # if the user is sleeping
+	if user_input["Values"][0][input_ind] == "1": # if the user is sleeping
 		activators_state["Values"][0][output_ind] = "1" # trun off the LED
-                lock_add("ledStatus", config_noIoT.lock_time)
+                lock_set("ledStatus", config_noIoT.lock_time)
 		
 	input_ind = user_input["ColumnNames"].index("joyStatus")
 	output_ind = activators_state["ColumnNames"].index("curtainStatus")
@@ -71,7 +76,7 @@ def update_activators_before_send():
 			activators_state["Values"][0][output_ind] = str(next_state)
 		else :
 			activators_state["Values"][0][output_ind] = "0"
-                lock_add("curtainStatus", config_noIoT.lock_time)
+                lock_set("curtainStatus", config_noIoT.lock_time)
 
 	elif user_input["Values"][0][input_ind] == "2": #right close the curtain
 		next_state = float(activators_state["Values"][0][output_ind]) + 0.1 # trun off the LED
@@ -79,15 +84,15 @@ def update_activators_before_send():
 			activators_state["Values"][0][output_ind] = str(next_state)
 		else :
 			activators_state["Values"][0][output_ind] = "1"
-                lock_add("curtainStatus", config_noIoT.lock_time)
+                lock_set("curtainStatus", config_noIoT.lock_time)
 		
 def update_activators_after_send():
 	global sensor_value
 	global activators_state
 
-        ind = activators_state["ColumnNames"].index("coffeeStatus")
-        if activators_state["Values"][0][ind] == "1":
-                activators_state["Values"][0][ind] = "0"
+	ind = activators_state["ColumnNames"].index("coffeeStatus")
+	if activators_state["Values"][0][ind] == "1":
+		activators_state["Values"][0][ind] = "0"
                 
 
 
@@ -104,18 +109,17 @@ def format_response():
 
 # The broker server
 def TCP(sock, addr): 
-        while True:
-	        raw_data = sock.recv(1024) 
-	        time.sleep(1) 
-	        if not raw_data or raw_data.decode() == '-quit-': 
-	        	break
-	        print raw_data
-	        format_data(raw_data)
-	        update_activators_before_send()
-	        response = format_response()
-                update_activators_after_send()
-                print response
-                sock.sendall(response)
+        raw_data = sock.recv(1024) 
+        time.sleep(1) 
+        if not raw_data or raw_data.decode() == '-quit-': 
+                return
+        print raw_data
+        format_data(raw_data)
+        update_activators_before_send()
+        response = format_response()
+        update_activators_after_send()
+        # print response
+        sock.sendall(response)
 	        
 	sock.close() 
 	#print('Connection from %s:%s closed.' %addr) 
@@ -173,38 +177,38 @@ def audio_action(x):
                 ind = activators_state["ColumnNames"].index("coffeeStatus")
                 if activators_state["Values"][0][ind] == "-1":
                         activators_state["Values"][0][ind] = "1"                        
-                        lock_add("coffeeStatus", config_noIoT.lock_time)
+                        lock_set("coffeeStatus", config_noIoT.lock_time)
                 
 	if x == 1: # No (I don't want coffee)
                 ind = activators_state["ColumnNames"].index("coffeeStatus")
                 if activators_state["Values"][0][ind] == "-1":
                         activators_state["Values"][0][ind] = "1"                        
-                        lock_add("coffeeStatus", config_noIoT.lock_time)
+                        lock_set("coffeeStatus", config_noIoT.lock_time)
 		
 	if x == 2: #turn on the light
                 ind = activators_state["ColumnNames"].index("ledStatus")   
                 activators_state["Values"][0][ind] = "0"
-                lock_add("ledStatus", config_noIoT.lock_time)
+                lock_set("ledStatus", config_noIoT.lock_time)
 		
 	if x == 3: #turn off the light.
                 ind = activators_state["ColumnNames"].index("ledStatus")   
                 activators_state["Values"][0][ind] = "1"
-                lock_add("ledStatus", config_noIoT.lock_time)
+                lock_set("ledStatus", config_noIoT.lock_time)
 		
 	#if x == 4:
 	#if x == 5:
 	if x == 6: #Open the curtain
                 ind = activators_state["ColumnNames"].index("curtainStatus")
                 activators_state["Values"][0][ind] = "0"
-                lock_add("curtainStatus", config_noIoT.lock_time)
+                lock_set("curtainStatus", config_noIoT.lock_time)
 	if x == 7: #Close the curtain
                 ind = activators_state["ColumnNames"].index("curtainStatus")
                 activators_state["Values"][0][ind] = "1"
-                lock_add("curtainStatus", config_noIoT.lock_time)
+                lock_set("curtainStatus", config_noIoT.lock_time)
 	if x == 8:
                 ind = activators_state["ColumnNames"].index("coffeeStatus")
                 activators_state["Values"][0][ind] = "1" # give user a cup of coffe
-                lock_add("coffeeStatus", config_noIoT.lock_time)
+                lock_set("coffeeStatus", config_noIoT.lock_time)
 
 def audio_main():  
         while (1):
@@ -229,15 +233,51 @@ def audio_main():
 			return  
 		
 		audio_action(findWord(text))
-        return  
+        return
+    
+# Web request part
+def web_response_action(target_activator, res):
+        res_dict = ast.literal_eval(res)
+        value = res_dict["Results"]["output1"]["value"]["Values"][0][0]
+        print (target_activator + "web value:" + value)
+        ind = activators_lock_timer["ColumnNames"].index(target_activator)
+        if activators_lock_timer["Values"][0][ind] == 0:
+                if target_activator == "coffeeStatus":
+                        if value == "True":
+                                activators_state["Values"][0][ind] = "-1"
+                else:
+                        activators_state["Values"][0][ind] = value
+    
+def format_web_request_data():
+        global sensor_value
+        f_data = config_noIoT.data_format
+        for i in range(len(sensor_value["ColumnNames"])):
+                cn = sensor_value["ColumnNames"][i]
+                data_ind = f_data["Inputs"]["input1"]["ColumnNames"].index(cn)
+                f_data["Inputs"]["input1"]["Values"][0][data_ind] = sensor_value["Values"][0][i]
+        return f_data
 
-#request = web_request()
-#server = broker_server()
+    
+def web_request_thread():
+        request = web_requests()
+        #server = broker_server()
+        while 1:
+                f_data = format_web_request_data()
+                print("f_data")
+                res = request.send_request(f_data, keys.LED_ML_URL, keys.LED_ML_API_KEY)
+                web_response_action("ledStatus", res)
+                res = request.send_request(f_data, keys.COFFEE_ML_URL, keys.COFFEE_ML_API_KEY)
+                web_response_action("coffeeStatus", res)
+                res = request.send_request(f_data, keys.CURTAIN_ML_URL, keys.CURTAIN_ML_API_KEY)
+                web_response_action("curtainStatus", res)
+                time.sleep(3)
 
-#request.send_request(data, config_noIoT.web_url, config_noIoT.api_key)
+
 try:
    thread.start_new_thread( server_thread, (server_config.HOST, server_config.PORT, ) )
    thread.start_new_thread( audio_main, ())
+   thread.start_new_thread( web_request_thread, ())
+   thread.start_new_thread( lock_countdown, ())
    #thread.start_new_thread( client_thread, (sys.argv[1], PORT, ) )
 except:
    print "Error: unable to start thread"

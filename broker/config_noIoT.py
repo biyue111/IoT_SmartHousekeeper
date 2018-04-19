@@ -1,20 +1,37 @@
 data_format =  {
-
-        "Inputs": {
-
-                "input2":
-                {
-                    "ColumnNames": ["temperature", "humidity"],
-                    "Values": [ [ "value", "value" ], ]
-                },        },
-            "GlobalParameters": {
-}
+  "Inputs": {
+    "input1": {
+      "ColumnNames": [
+        "Time",
+        "indoorTemp",
+        "humidity",
+        "indoorIllum",
+        "outdoorIllum",
+        "ledStatus",
+        "coffeeStatus",
+        "curtainStatus"
+      ],
+      "Values": [
+        [
+          "0",
+          "0",
+          "0",
+          "0",
+          "0",
+          "0",
+          "0",
+          "0"
+        ],
+      ]
     }
+  },
+  "GlobalParameters": {}
+}
 
-sensor_value = { "ColumnNames": ["currentTime", "indoorTemp", "humidity", "indoorIllum", "outdoorIllum" ],
-                    "Values": [ [ "value", "value" , "value", "value", "value"], ] }
+sensor_value = { "ColumnNames": ["Time", "indoorTemp", "humidity", "indoorIllum", "outdoorIllum" ],
+                    "Values": [ [ "0", "0" , "0", "0", "0"], ] }
 user_input = { "ColumnNames": ["sleepStatus", "joyStatus" ],
-                    "Values": [ [ "value", "value"], ] }
+                    "Values": [ [ "0", "0"], ] }
 
 activators_state = { "ColumnNames": ["ledStatus", "coffeeStatus", "curtainStatus"],
                     "Values": [ [ "0", "0" , "0"], ] }

@@ -3,7 +3,7 @@ import urllib2
 
 import json 
 
-class web_request:
+class web_requests:
         
         def __init__(self):
                 pass
@@ -24,7 +24,8 @@ class web_request:
                     # response = urllib.request.urlopen(req)
 
                     result = response.read()
-                    print(result) 
+                    #print(result)
+                    return result
                 except urllib2.HTTPError, error:
                     print("The request failed with status code: " + str(error.code))
 
