@@ -127,6 +127,7 @@ def format_response():
 
 
 # The broker server
+'''
 def TCP(sock, addr): 
 	raw_data = sock.recv(1024) 
 	time.sleep(1) 
@@ -142,17 +143,26 @@ def TCP(sock, addr):
 			
 	sock.close() 
 	#print('Connection from %s:%s closed.' %addr) 
+'''
 
 def server_thread(HOST, PORT):
-	s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+	s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 	s.bind((HOST, PORT))
-	s.listen(1) 
+	
 	print('Server is running...')
-	sock, addr = s.accept()
-	print('Accept new connection from %s.' %addr[0])
+	
 	while True:
-		TCP(sock, addr)
-		sock, addr = s.accept()
+                raw_data, addr = s.recvfrom(1024)
+                print raw_data
+                format_data(raw_data)
+                update_activators_before_send()
+                response = format_response()
+                update_activators_after_send()
+                s.sendto(response, addr)
+                #s.close()
+                
+                
+                
 		
 # Send request to ML Studio	
 def send_request(self, data, url, api_key):
@@ -232,7 +242,7 @@ def audio_action(x):
 	activators_state_lock.release()
 
 def audio_server_thread():
-	s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+	s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 	s.bind((server_config.AUDIO_SERVER_HOST, server_config.AUDIO_SERVER_PORT))
 	print('Audio server is running...')
 	#sock, addr = s.accept()
