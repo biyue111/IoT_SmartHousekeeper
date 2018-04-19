@@ -50,12 +50,12 @@ def format_data(raw_data):
 	for i in range(0, length):
 		k = raw_data.split(';')[i].split(':')[0]
 		v = raw_data.split(';')[i].split(':')[1]
-			if sensor_value["ColumnNames"].count(k):
-				ind = sensor_value["ColumnNames"].index(k)
-				sensor_value["Values"][0][ind] = v
-			if user_input["ColumnNames"].count(k):
-				ind = user_input["ColumnNames"].index(k)
-				user_input["Values"][0][ind] = v
+		if sensor_value["ColumnNames"].count(k):
+			ind = sensor_value["ColumnNames"].index(k)
+			sensor_value["Values"][0][ind] = v
+		if user_input["ColumnNames"].count(k):
+			ind = user_input["ColumnNames"].index(k)
+			user_input["Values"][0][ind] = v
 			
 def update_activators_before_send():
 		# Update the activators_state with the user_input before sending to client raspberrys
