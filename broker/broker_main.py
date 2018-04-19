@@ -236,19 +236,19 @@ def audio_server_thread():
 	s.bind((server_config.AUDIO_SERVER_HOST, server_config.AUDIO_SERVER_PORT))
 	s.listen(1) 
 	print('Audio server is running...')
-	sock, addr = s.accept()
+	#sock, addr = s.accept()
 	print('Accept new connection from %s.' %addr[0])
 	while True:
-		raw_data = sock.recv(1024) 
+		raw_data, addr = sock.recv(1024) 
 		time.sleep(1) 
 		if not raw_data or raw_data.decode() == '-quit-': 
 			return
 		print ("receive audio action:"+ raw_data)
 		audio_action(int(raw_data))
-		sock.close() 
+		#sock.close() 
 		
 	#print('Connection from %s:%s closed.' %addr) 
-		sock, addr = s.accept()
+		#sock, addr = s.accept()
 
 def audio_main():  
 	while (1):
