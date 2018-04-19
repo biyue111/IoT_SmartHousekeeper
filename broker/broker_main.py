@@ -237,7 +237,7 @@ def audio_server_thread():
 	s.listen(1) 
 	print('Audio server is running...')
 	#sock, addr = s.accept()
-	print('Accept new connection from %s.' %addr[0])
+	#print('Accept new connection from %s.' %addr[0])
 	while True:
 		raw_data, addr = sock.recv(1024) 
 		time.sleep(1) 
