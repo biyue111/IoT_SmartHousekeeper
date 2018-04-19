@@ -35,7 +35,6 @@ def getHeader():
   
 def main():	 
 	s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-	s.bind((server_config.AUDIO_CLIENT_HOST, server_config.AUDIO_CLIENT_PORT))
 	addr = (server_config.AUDIO_SERVER_HOST, server_config.AUDIO_SERVER_PORT)
 	while True:
 		r_input = raw_input("Recording time")
