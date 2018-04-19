@@ -230,7 +230,26 @@ def audio_action(x):
 		activators_state["Values"][0][ind] = "1" # give user a cup of coffe
 		lock_set("coffeeStatus", config_noIoT.lock_time)
 	activators_state_lock.release()
-	
+
+def audio_server_thread():
+	s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+	s.bind((AUDIO_SERVER_HOST, AUDIO_SERVER_PORT))
+	s.listen(1) 
+	print('Audio server is running...')
+	sock, addr = s.accept()
+	print('Accept new connection from %s.' %addr[0])
+	while True:
+		raw_data = sock.recv(1024) 
+		time.sleep(1) 
+		if not raw_data or raw_data.decode() == '-quit-': 
+			return
+		print ("receive audio action:"+ raw_data)
+		audio_action(int(raw_data))
+		sock.close() 
+		
+	#print('Connection from %s:%s closed.' %addr) 
+		sock, addr = s.accept()
+
 def audio_main():  
 	while (1):
 		r_input = raw_input("Recording time")
@@ -298,9 +317,10 @@ def web_request_thread():
 
 try:
    thread.start_new_thread( server_thread, (server_config.HOST, server_config.PORT, ) )
-   thread.start_new_thread( audio_main, ())
+   #thread.start_new_thread( audio_main, ())
+   thread.start_new_thread( audio_server_thread, ())
    thread.start_new_thread( lock_countdown, ())
-   time.sleep(10)
+   time.sleep(7)
    thread.start_new_thread( web_request_thread, ())
    #thread.start_new_thread( client_thread, (sys.argv[1], PORT, ) )
 except:

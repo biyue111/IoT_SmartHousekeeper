@@ -7,7 +7,9 @@ import json
 import hashlib  
 import base64
 import os
-from keyWordExtractUpdate import findWord  
+import socket
+from keyWordExtractUpdate import findWord
+import server_config as server_config
   
 URL = "http://api.xfyun.cn/v1/service/v1/iat"  
 APPID = "xxx"  
@@ -31,8 +33,15 @@ def getHeader():
     return header  
   
 def main():  
+	s = socket.socket(socker.AF_INET, socket.SOCK_DGRAM)
+	s.bind(server_config.AUDIO_CLIENT_HOST, server_config.AUDIO_CLIENT_PORT)
+	addr = (server_config.AUDIO_SERVER_HOST, server_config.AUDIO_SERVER_PORT)
     while (1):
-		os.system("sudo arecord -D \"plughw:1,0\" -r 16000 -f \"Signed 16 bit Little Endian\" iotTest.wav")
+		r_input = raw_input("Recording time")
+		if r_input == '':
+				print("Please write the recording time")
+				continue
+		os.system("sudo arecord -D \"plughw:1,0\" -d "+str(r_input)+" -r 16000 -f \"Signed 16 bit Little Endian\" iotTest.wav")
 		f = open("iotTest.wav", 'rb')  
 		file_content = f.read()  
 		base64_audio = base64.b64encode(file_content)  
@@ -52,11 +61,13 @@ def main():
 		#text = u'咖啡'
 		#print text
 		#print type(text)
-		print findWord(text)
+		word = str(findWord(text))
+		s.sendto(word, addr)
+		
 		
 		#print type(text.decode("utf-8"))
 		#print findWord(text.decode("utf-8"))
-  
+	s.close()
     return  
   
 if __name__ == '__main__':  
