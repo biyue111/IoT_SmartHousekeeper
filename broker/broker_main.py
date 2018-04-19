@@ -233,7 +233,7 @@ def audio_action(x):
 
 def audio_server_thread():
 	s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-	s.bind((AUDIO_SERVER_HOST, AUDIO_SERVER_PORT))
+	s.bind(server_config.AUDIO_SERVER_HOST, server_config.AUDIO_SERVER_PORT)
 	s.listen(1) 
 	print('Audio server is running...')
 	sock, addr = s.accept()
