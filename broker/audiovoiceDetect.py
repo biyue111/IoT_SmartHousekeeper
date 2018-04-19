@@ -39,8 +39,8 @@ def main():
     while True:
 		r_input = raw_input("Recording time")
 		if r_input == '':
-				print("Please write the recording time")
-				continue
+			print("Please write the recording time")
+			continue
 		os.system("sudo arecord -D \"plughw:1,0\" -d "+str(r_input)+" -r 16000 -f \"Signed 16 bit Little Endian\" iotTest.wav")
 		f = open("iotTest.wav", 'rb')  
 		file_content = f.read()  
@@ -56,17 +56,9 @@ def main():
 		else:  
 			print r.text
 			return  
-		
-		#print type(text)
-		#text = u'咖啡'
-		#print text
-		#print type(text)
 		word = str(findWord(text))
 		s.sendto(word, addr)
-		
-		
-		#print type(text.decode("utf-8"))
-		#print findWord(text.decode("utf-8"))
+
 	s.close()
     return  
   
