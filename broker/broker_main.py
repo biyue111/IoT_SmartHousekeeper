@@ -36,10 +36,10 @@ def lock_countdown():
 					print (activators_lock_timer["ColumnNames"][i] + ":" + str(activators_lock_timer["Values"][0][i]))
 			time.sleep(1)
 
-	def lock_set(k, l_time):
-			global activators_lock_timer
-			ind = activators_lock_timer["ColumnNames"].index(k)
-			activators_lock_timer["Values"][0][ind] = l_time
+def lock_set(k, l_time):
+		global activators_lock_timer
+		ind = activators_lock_timer["ColumnNames"].index(k)
+		activators_lock_timer["Values"][0][ind] = l_time
 
 
 
