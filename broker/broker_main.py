@@ -8,6 +8,7 @@ import sys
 #from broker_server import *
 import config_noIoT as config_noIoT
 import server_config as server_config
+import keys as keys
 
 import requests  
 import urllib  
@@ -16,9 +17,6 @@ import hashlib
 import base64
 import os
 from keyWordExtractUpdate import findWord  
-URL = "http://api.xfyun.cn/v1/service/v1/iat"  
-APPID = "xxx"  
-API_KEY = "xxx" 
 
 data = config_noIoT.data_format
 sensor_value = config_noIoT.sensor_value
@@ -28,10 +26,16 @@ activators_lock_timer = config_noIoT.activators_lock_timer
 
 def lock_countdown():
         global activators_lock_timer
-        for i in range(len(activators_lock_timer["Values"])):
-                if activators_lock_timer["Values"][i] > 0:
-                        activators_lock_timer["Values"][i] -= 1;
+        for i in range(len(activators_lock_timer["Values"][0])):
+                if activators_lock_timer["Values"][0][i] > 0:
+                        activators_lock_timer["Values"][0][i] -= 1;
         time.sleep(1000)
+
+def lock_add(k, add_v):
+        global activators_lock_timer
+        ind = activators_lock_timer["ColumnNames"].index(k)
+        activators_lock_timer["Values"][0][ind] += add_v
+
 
 
 def format_data(raw_data):
@@ -48,7 +52,8 @@ def format_data(raw_data):
 			ind = user_input["ColumnNames"].index(k)
 			user_input["Values"][0][ind] = v
 			
-def update_activators():
+def update_activators_before_send():
+        # Update the activators_state with the user_input before sending to client raspberrys
 	global sensor_value
 	global activators_state
 
@@ -56,6 +61,7 @@ def update_activators():
 	output_ind = activators_state["ColumnNames"].index("ledStatus")
         if user_input["Values"][0][input_ind] == "1": # if the user is sleeping
 		activators_state["Values"][0][output_ind] = "1" # trun off the LED
+                lock_add("ledStatus", config_noIoT.lock_time)
 		
 	input_ind = user_input["ColumnNames"].index("joyStatus")
 	output_ind = activators_state["ColumnNames"].index("curtainStatus")
@@ -65,13 +71,26 @@ def update_activators():
 			activators_state["Values"][0][output_ind] = str(next_state)
 		else :
 			activators_state["Values"][0][output_ind] = "0"
-	elif user_input["Values"][0][input_ind] == "2": #right
+                lock_add("curtainStatus", config_noIoT.lock_time)
+
+	elif user_input["Values"][0][input_ind] == "2": #right close the curtain
 		next_state = float(activators_state["Values"][0][output_ind]) + 0.1 # trun off the LED
 		if next_state <=1 :
 			activators_state["Values"][0][output_ind] = str(next_state)
 		else :
 			activators_state["Values"][0][output_ind] = "1"
+                lock_add("curtainStatus", config_noIoT.lock_time)
 		
+def update_activators_after_send():
+	global sensor_value
+	global activators_state
+
+        ind = activators_state["ColumnNames"].index("coffeeStatus")
+        if activators_state["Values"][0][ind] == "1":
+                activators_state["Values"][0][ind] = "0"
+                
+
+
 def format_response():
 	global sensor_value
 	global activators_state
@@ -92,8 +111,9 @@ def TCP(sock, addr):
 	        	break
 	        print raw_data
 	        format_data(raw_data)
-	        update_activators()
+	        update_activators_before_send()
 	        response = format_response()
+                update_activators_after_send()
                 print response
                 sock.sendall(response)
 	        
@@ -117,17 +137,17 @@ def send_request(self, data, url, api_key):
 	headers = {'Content-Type':'application/json', 'Authorization':('Bearer '+ api_key)}
 	req = urllib2.Request(url, body, headers) 
 	try:
-	    response = urllib2.urlopen(req)
-	    # If you are using Python 3+, replace urllib2 with urllib.request in the above code:
-	    # req = urllib.request.Request(url, body, headers) 
-	    # response = urllib.request.urlopen(req)
-	    result = response.read()
-	    print(result) 
+	        response = urllib2.urlopen(req)
+	        # If you are using Python 3+, replace urllib2 with urllib.request in the above code:
+	        # req = urllib.request.Request(url, body, headers) 
+	        # response = urllib.request.urlopen(req)
+	        result = response.read()
+	        print(result) 
 	except urllib2.HTTPError, error:
-	    print("The request failed with status code: " + str(error.code))
-	    # Print the headers - they include the requert ID and the timestamp, which are useful for debugging the failure
-	    print(error.info())
-	    print(json.loads(error.read()))
+	        print("The request failed with status code: " + str(error.code))
+	        # Print the headers - they include the requert ID and the timestamp, which are useful for debugging the failure
+	        print(error.info())
+	        print(json.loads(error.read()))
 		
 # Audio input
 def getHeader():  
@@ -136,41 +156,69 @@ def getHeader():
 	paramBase64 = base64.b64encode(param)  
 
 	m2 = hashlib.md5()  
-	m2.update(API_KEY + curTime + paramBase64)  
+	m2.update(keys.AUDIO_API_KEY + curTime + paramBase64)  
 	checkSum = m2.hexdigest()  
 	header ={  
 	'X-CurTime':curTime,  
 	'X-Param':paramBase64,  
-	'X-Appid':APPID,  
+	'X-Appid':keys.AUDIO_APPID,  
 	'X-CheckSum':checkSum,  
 	'Content-Type':'application/x-www-form-urlencoded; charset=utf-8',  
 	}  
 	return header 
 
-#def audio_action(x):
-#	global activators_state
-#	if x == 0:
-#	if x == 1:
-#		
-#	if x == 2: #turn on the light
-#		
-#	if x == 3: #turn off the light.
-#		
-#	if x == 4:
-#	if x == 5:
-#	if x == 6:
-#	if x == 7:
-#	if x == 8:
+def audio_action(x):
+	global activators_state
+	if x == 0: # Yes (give me a coffee)
+                ind = activators_state["ColumnNames"].index("coffeeStatus")
+                if activators_state["Values"][0][ind] == "-1":
+                        activators_state["Values"][0][ind] = "1"                        
+                        lock_add("coffeeStatus", config_noIoT.lock_time)
+                
+	if x == 1: # No (I don't want coffee)
+                ind = activators_state["ColumnNames"].index("coffeeStatus")
+                if activators_state["Values"][0][ind] == "-1":
+                        activators_state["Values"][0][ind] = "1"                        
+                        lock_add("coffeeStatus", config_noIoT.lock_time)
+		
+	if x == 2: #turn on the light
+                ind = activators_state["ColumnNames"].index("ledStatus")   
+                activators_state["Values"][0][ind] = "0"
+                lock_add("ledStatus", config_noIoT.lock_time)
+		
+	if x == 3: #turn off the light.
+                ind = activators_state["ColumnNames"].index("ledStatus")   
+                activators_state["Values"][0][ind] = "1"
+                lock_add("ledStatus", config_noIoT.lock_time)
+		
+	#if x == 4:
+	#if x == 5:
+	if x == 6: #Open the curtain
+                ind = activators_state["ColumnNames"].index("curtainStatus")
+                activators_state["Values"][0][ind] = "0"
+                lock_add("curtainStatus", config_noIoT.lock_time)
+	if x == 7: #Close the curtain
+                ind = activators_state["ColumnNames"].index("curtainStatus")
+                activators_state["Values"][0][ind] = "1"
+                lock_add("curtainStatus", config_noIoT.lock_time)
+	if x == 8:
+                ind = activators_state["ColumnNames"].index("coffeeStatus")
+                activators_state["Values"][0][ind] = "1" # give user a cup of coffe
+                lock_add("coffeeStatus", config_noIoT.lock_time)
 
 def audio_main():  
-    while (1):
-		os.system("sudo arecord -D \"plughw:1,0\" -r 16000 -f \"Signed 16 bit Little Endian\" iotTest.wav")
+        while (1):
+                r_input = raw_input("Recording time")
+                if r_input == '':
+                        print("Please write the recording time")
+                        continue
+		os.system("sudo arecord -D \"plughw:1,0\" -d "+str(r_input)+" -r 16000 -f \"Signed 16 bit Little Endian\" iotTest.wav")
 		f = open("iotTest.wav", 'rb')  
 		file_content = f.read()  
 		base64_audio = base64.b64encode(file_content)  
 		body = urllib.urlencode({'audio': base64_audio})  
 	  
-		r = requests.post(URL,headers=getHeader(),data=body)  
+		r = requests.post(keys.AUDIO_URL,headers=getHeader(),data=body)  
 		result = json.loads(r.content)  
 	  
 		if result["code"] == "0":  
@@ -180,16 +228,8 @@ def audio_main():
 			print r.text
 			return  
 		
-		#print type(text)
-		#text = u'咖啡'
-		#print text
-		#print type(text)
 		audio_action(findWord(text))
-		#print findWord(text)
-		
-		#print type(text.decode("utf-8"))
-		#print findWord(text.decode("utf-8"))
-    return  
+        return  
 
 #request = web_request()
 #server = broker_server()
@@ -197,9 +237,11 @@ def audio_main():
 #request.send_request(data, config_noIoT.web_url, config_noIoT.api_key)
 try:
    thread.start_new_thread( server_thread, (server_config.HOST, server_config.PORT, ) )
+   thread.start_new_thread( audio_main, ())
    #thread.start_new_thread( client_thread, (sys.argv[1], PORT, ) )
 except:
    print "Error: unable to start thread"
 
 while 1:
    pass
+
