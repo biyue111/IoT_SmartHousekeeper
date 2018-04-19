@@ -23,13 +23,13 @@ import ast
 
 #data = config_noIoT.data_format
 sensor_value = config_noIoT.sensor_value
-sensor_value_lock = thread.Lock()
+sensor_value_lock = threading.Lock()
 user_input = config_noIoT.user_input
-user_input_lock = thread.Lock()
+user_input_lock = threading.Lock()
 activators_state = config_noIoT.activators_state
-activators_state_lock = thread.Lock()
+activators_state_lock = threading.Lock()
 activators_lock_timer = config_noIoT.activators_lock_timer
-activators_lock_timer_lock = thread.Lock()
+activators_lock_timer_lock = threading.Lock()
 
 def lock_countdown():
 	while 1:
