@@ -57,7 +57,9 @@ def main():
 		else:  
 			print r.text
 			return	
+			
 		word = str(findWord(text))
+		print ("word:"+word)
 		s.sendto(word, addr)
 
 	s.close()
